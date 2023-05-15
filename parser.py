@@ -9,26 +9,21 @@ headers = {'accept': '*/*', 'user-agent': ua.firefox}
 page = 1
 authors = []
 story_names = []
+response = requests.get(url, headers)
 
-
-while True:
+while response.status_code == 200:
     response = requests.get(url, headers)
     html = Bs(response.content, "html.parser")
     items = html.select("#content")
     page_title = html.select(".page-title")
 
-    if page <= 22:
-        for el in html.select("#content"):
-            author = el.select(".author")
-            story_name = el.select("#content>article > h2 > a")
-            for i in author:
-                authors.append(i.text)
-            for i in story_name:
-                story_names.append(*i.contents)
-
-
-    else:
-        break
+    for el in html.select("#content"):
+        author = el.select(".author")
+        story_name = el.select("#content>article > h2 > a")
+        for i in author:
+            authors.append(i.text)
+        for i in story_name:
+            story_names.append(*i.contents)
 
     page += 1
     url = f"https://fobook.ru/page{page}"
